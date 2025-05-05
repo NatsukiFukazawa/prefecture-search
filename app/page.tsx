@@ -10,14 +10,15 @@ export default function Home() {
   const filteredPrefectures = useMemo(() => {
     if (!searchPattern) return prefectures
     try {
+      // 検索パターンから「？」を除いた実際の文字数を計算
       // 全角・半角の「？」を「.」に変換して正規表現パターンを作成
       const pattern = searchPattern.replace(/[?？]/g, '.')
       const regex = new RegExp(pattern)
       setIsValidPattern(true)
       return prefectures.filter(
         (prefecture) =>
-          regex.test(prefecture.kana) ||
-          regex.test(prefecture.hiragana)
+          (regex.test(prefecture.kana) && prefecture.kana.length === pattern.length) ||
+          (regex.test(prefecture.hiragana) && prefecture.hiragana.length === pattern.length)
       )
     } catch (e) {
       console.error(e)
@@ -25,6 +26,8 @@ export default function Home() {
       return prefectures
     }
   }, [searchPattern])
+
+  
 
   return (
     <main className="container mx-auto px-4 py-8">
